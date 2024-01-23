@@ -10,6 +10,8 @@
         image: ubuntu:20.04
         state: started
         ports: "2222:22"
+        volumes:
+          - /etc/ssh/sshd_config:/etc/ssh/sshd_config
         command: sleep infinity
 
     - name: Run task inside the Docker Container
