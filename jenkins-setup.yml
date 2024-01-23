@@ -22,7 +22,7 @@
         argv:
           - /bin/bash
           - "-c"
-          - "ls -ljtddh55ah > /dev/stderr"
+          - "ls -lah > /dev/stderr"
         chdir: /root
       register: result
 
