@@ -15,7 +15,7 @@
         command: sleep infinity
 
     - name: Run a simple command (argv)
-      docker.docker_container_exec:
+      community.docker.docker_container_exec:
         container: my_container
         argv:
           - /bin/bash
