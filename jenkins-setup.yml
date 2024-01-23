@@ -30,7 +30,21 @@
           - /bin/bash
           - "-c"
           - apt-get update 
-          - apt-get install openjdk-11-jdk wget apt-transport-https ca-certificates gnupg2 software-properties-common -y
+    - name: Install required packages 2
+      community.docker.docker_container_exec:
+        container: my_container
+        argv:
+          - /bin/bash
+          - "-c"
+          - apt-get
+          - install 
+          - openjdk-11-jdk 
+          - wget 
+          - apt-transport-https 
+          - ca-certificates 
+          - gnupg2 
+          - software-properties-common 
+          - "-y"
       # register: result
     - name: Add Jenkins repository key
       community.docker.docker_container_exec:
