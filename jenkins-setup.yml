@@ -7,8 +7,8 @@
     - name: Create Docker Container
       docker_container:
         name: my_container
-        image: my_image
+        image: ubuntu:20.04
         state: started
     - name: Run task inside the Docker Container
-      command: "your_command_here"
+      command: "ls"
       delegate_to: my_container
