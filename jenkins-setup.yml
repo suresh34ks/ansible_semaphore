@@ -1,56 +1,106 @@
----
-- name: Create Docker Container and Install Jenkins
+
+- name: Create Docker Container and Update APT packages
   hosts: 172.27.83.5
   gather_facts: false
   tasks:
+  - name: Attempt and graceful roll back demo
+    block: 
     - name: Create Docker Container
       docker_container:
         name: my_container
         image: ubuntu:20.04
         state: started
-        ports: 
-          - "2222:22"
-          - "8080:8080"
+        ports: "2222:22"
         volumes:
           - /etc/ssh/sshd_config:/etc/ssh/sshd_config
         command: sleep infinity
-
-    - name: Install dependencies
-      ansible.builtin.shell:
-        cmd: |
-          apt-get update && \
-          apt-get install -y \
-          wget \
-          gnupg2 \
-          software-properties-common
-
-    - name: Add Jenkins GPG key and repository
-      ansible.builtin.shell:
-        cmd: |
-          wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -
-          sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
-
+    - name: Run a simple command (argv)
+      community.docker.docker_container_exec:
+        container: my_container
+        argv:
+          - /bin/bash
+          - "-c"
+          - "ls -lha > /dev/stderr"
+        chdir: /root
+      register: result
+    - name: Install required packages
+      community.docker.docker_container_exec:
+        container: my_container
+        argv:
+          - apt-get
+          - update
+          - y
+          - apt-get
+          - install
+          - openjdk-11-jdk
+          - wget
+          - apt-transport-https
+          - ca-certificates
+          - gnupg2
+          - software-properties-common
+          - y
+    - name: Add Jenkins repository key
+      community.docker.docker_container_exec:
+        container: my_container
+        argv:
+          - wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -
+    - name: Add Jenkins repository
+      community.docker.docker_container_exec:
+        container: my_container
+        argv:
+          - sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+    - name: Update package lists
+      community.docker.docker_container_exec:
+        container: my_container
+        argv:
+          - apt-get
+          - update
+          - y
     - name: Install Jenkins
-      ansible.builtin.shell:
-        cmd: |
-          apt-get update && \
-          apt-get install -y jenkins
+      community.docker.docker_container_exec:
+        container: my_container
+        argv:
+          - apt-get
+          - install
+          - jenkins
+          - y
+    - name: Start Jenkins service
+      community.docker.docker_container_exec:
+        container: my_container
+        argv:
+          - systemctl
+          - start
+          - jenkins
+    - name: Check Jenkins status
+      community.docker.docker_container_exec:
+        container: my_container
+        argv:
+          - systemctl
+          - status
+          - jenkins
+      register: jenkins_status
+      until: jenkins_status.stdout.find("Active: active (running)") != -1
+      retries: 10
+      delay: 10
 
-  rescue:
+    rescue: # <--- a rescue
     - name: Check if the task failed
       fail:
         msg: "Task failed, stopping and removing the container"
+      when: result is failed
       ignore_errors: true
     - name: Stop Docker Container
       docker_container:
         name: my_container
         state: stopped
+      when: result is failed
     - name: Remove Docker Container
       docker_container:
         name: my_container
         state: absent
+      when: result is failed
     
-  always:
+    always: # <--- an always
     - name: Always do this
       ansible.builtin.debug:
         msg: "This always executes"
