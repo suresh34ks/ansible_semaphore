@@ -44,7 +44,7 @@
           - ca-certificates 
           - gnupg2 
           - software-properties-common 
-          - "-y"
+          - -y
       # register: result
     - name: Add Jenkins repository key
       community.docker.docker_container_exec:
