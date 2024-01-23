@@ -79,7 +79,7 @@
           - status
           - jenkins
       register: jenkins_status
-      until: jenkins_status.stdout.find("Active: active (running)") != -1
+      until: jenkins_status.stdout.find("Active{{\:}} active (running)")  != -1
       retries: 10
       delay: 10
 
