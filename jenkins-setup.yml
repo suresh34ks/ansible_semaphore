@@ -13,6 +13,7 @@
         volumes:
           - /etc/ssh/sshd_config:/etc/ssh/sshd_config
         command: sleep infinity
+      ignore_errors: yes  # Ignore errors and proceed to the next task even if this one fails
 
     - name: Run a simple command (argv)
       community.docker.docker_container_exec:
@@ -23,3 +24,21 @@
           - "ls -lah > /dev/stderr"
         chdir: /root
       register: result
+
+  # Block to handle cleanup if any task fails
+  block:
+    - name: Stop Docker Container
+      docker_container:
+        name: my_container
+        state: stopped
+      when: result is failed  # Only run this task if the previous task failed
+
+    - name: Remove Docker Container
+      docker_container:
+        name: my_container
+        state: absent
+      when: result is failed  # Only run this task if the previous task failed
+
+  always:
+    - name: Cleanup Temporary Files or Tasks
+      # Add any additional cleanup tasks that should always run
