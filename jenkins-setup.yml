@@ -38,7 +38,7 @@
         name: my_container
         state: absent
       when: result is failed
-    ignore_errors: true
+    # ignore_errors: true
     always: # <--- an always
       - name: Always do this
         ansible.builtin.debug:
