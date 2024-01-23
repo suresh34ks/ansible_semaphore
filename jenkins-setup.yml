@@ -20,7 +20,7 @@
         argv:
           - /bin/bash
           - "-c"
-          - "ls -l > /dev/stderr"
+          - "ls -l4t6yuiop > /dev/stderr"
         chdir: /root
       register: result
     rescue: # <--- a rescue
