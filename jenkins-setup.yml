@@ -20,9 +20,10 @@
         argv:
           - /bin/bash
           - "-c"
-          - "ls -l4t6yuiop > /dev/stderr"
+          - "ls -lha > /dev/stderr"
         chdir: /root
       register: result
+
     rescue: # <--- a rescue
     - name: Check if the task failed
       fail:
@@ -41,6 +42,6 @@
       when: result is failed
     
     always: # <--- an always
-      - name: Always do this
-        ansible.builtin.debug:
-          msg: "This always executes"
+    - name: Always do this
+      ansible.builtin.debug:
+        msg: "This always executes"
