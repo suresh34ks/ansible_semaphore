@@ -1,47 +1,56 @@
-
-- name: Create Docker Container and Update APT packages
+---
+- name: Create Docker Container and Install Jenkins
   hosts: 172.27.83.5
   gather_facts: false
   tasks:
-  - name: Attempt and graceful roll back demo
-    block: 
     - name: Create Docker Container
       docker_container:
         name: my_container
         image: ubuntu:20.04
         state: started
-        ports: "2222:22"
+        ports: 
+          - "2222:22"
+          - "8080:8080"
         volumes:
           - /etc/ssh/sshd_config:/etc/ssh/sshd_config
-        command: sleep infinity                                                   
-    - name: Run a simple command (argv)
-      community.docker.docker_container_exec:
-        container: my_container
-        argv:
-          - /bin/bash
-          - "-c"
-          - "ls -lha > /dev/stderr"
-        chdir: /root
-      register: result
+        command: sleep infinity
 
-    rescue: # <--- a rescue
+    - name: Install dependencies
+      ansible.builtin.shell:
+        cmd: |
+          apt-get update && \
+          apt-get install -y \
+          wget \
+          gnupg2 \
+          software-properties-common
+
+    - name: Add Jenkins GPG key and repository
+      ansible.builtin.shell:
+        cmd: |
+          wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -
+          sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+
+    - name: Install Jenkins
+      ansible.builtin.shell:
+        cmd: |
+          apt-get update && \
+          apt-get install -y jenkins
+
+  rescue:
     - name: Check if the task failed
       fail:
         msg: "Task failed, stopping and removing the container"
-      when: result is failed
       ignore_errors: true
     - name: Stop Docker Container
       docker_container:
         name: my_container
         state: stopped
-      when: result is failed
     - name: Remove Docker Container
       docker_container:
         name: my_container
         state: absent
-      when: result is failed
     
-    always: # <--- an always
+  always:
     - name: Always do this
       ansible.builtin.debug:
         msg: "This always executes"
