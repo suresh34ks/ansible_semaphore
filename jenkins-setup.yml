@@ -28,6 +28,7 @@
       fail:
         msg: "Task failed, stopping and removing the container"
       when: result is failed
+      ignore_errors: true
     - name: Stop Docker Container
       docker_container:
         name: my_container
@@ -38,7 +39,7 @@
         name: my_container
         state: absent
       when: result is failed
-    # ignore_errors: true
+    
     always: # <--- an always
       - name: Always do this
         ansible.builtin.debug:
