@@ -36,11 +36,15 @@
       community.docker.docker_container_exec:
         container: my_container
         argv:
+          - /bin/bash
+          - "-c"
           - wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io.key | apt-key add -
     - name: Add Jenkins repository
       community.docker.docker_container_exec:
         container: my_container
         argv:
+          - /bin/bash
+          - "-c"
           - sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
     - name: Update package lists
       community.docker.docker_container_exec:
@@ -48,11 +52,12 @@
         argv:
           - apt-get
           - update
-          - y
     - name: Install Jenkins
       community.docker.docker_container_exec:
         container: my_container
         argv:
+          - /bin/bash
+          - "-c"
           - apt-get
           - install
           - jenkins
@@ -61,6 +66,8 @@
       community.docker.docker_container_exec:
         container: my_container
         argv:
+          - /bin/bash
+          - "-c"
           - systemctl
           - start
           - jenkins
@@ -68,6 +75,8 @@
       community.docker.docker_container_exec:
         container: my_container
         argv:
+          - /bin/bash
+          - "-c"
           - systemctl
           - status
           - jenkins
