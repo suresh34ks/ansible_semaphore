@@ -14,6 +14,12 @@
           - /etc/ssh/sshd_config:/etc/ssh/sshd_config
         command: sleep infinity
 
-    - name: Run task inside the Docker Container
-      command: "ls"
-      delegate_to: my_container
+    - name: Run a simple command (argv)
+      docker.docker_container_exec:
+        container: my_container
+        argv:
+          - /bin/bash
+          - "-c"
+          - "ls -lah > /dev/stderr"
+        chdir: /root
+      register: result
