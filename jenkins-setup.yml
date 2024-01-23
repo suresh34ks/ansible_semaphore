@@ -6,8 +6,7 @@
   tasks:
     - name: Attempt and graceful roll back demo
       block: # <--- a block of tasks
-        - name: Create Docker Container
-          docker_container:
+        - name: Create Docker Container docker_container:
             name: my_container
             image: ubuntu:20.04
             state: started
@@ -15,16 +14,16 @@
             volumes:
               - /etc/ssh/sshd_config:/etc/ssh/sshd_config
             command: sleep infinity
-
-       - name: Run a simple command (argv)
-         community.docker.docker_container_exec:
-           container: my_container
-           argv:
-             - /bin/bash
-             - "-c"
-             - "ls -l > /dev/stderr"
-           chdir: /root
-         register: result
+        
+        - name: Run a simple command (argv)
+          community.docker.docker_container_exec:
+            container: my_container
+            argv:
+              - /bin/bash
+              - "-c"
+              - "ls -l > /dev/stderr"
+            chdir: /root
+          register: result
 
         # - name: Never print this
         #   ansible.builtin.debug:
