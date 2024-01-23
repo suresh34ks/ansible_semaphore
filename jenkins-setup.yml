@@ -1,34 +1,36 @@
----
+
 - name: Create Docker Container and Update APT packages
   hosts: 172.27.83.5
   gather_facts: false
 
   tasks:
-    - name: Create Docker Container
-      docker_container:
-        name: my_container
-        image: ubuntu:20.04
-        state: started
-        ports: "2222:22"
-        volumes:
-          - /etc/ssh/sshd_config:/etc/ssh/sshd_config
-        command: sleep infinity
-      notify:
-        - Stop and Remove Docker Container
+    - name: Attempt and graceful roll back demo
+      block: # <--- a block of tasks
+        - name: Create Docker Container
+          docker_container:
+            name: my_container
+            image: ubuntu:20.04
+            state: started
+            ports: "2222:22"
+            volumes:
+              - /etc/ssh/sshd_config:/etc/ssh/sshd_config
+            command: sleep infinity
 
-    - name: Run a simple command (argv)
-      community.docker.docker_container_exec:
-        container: my_container
-        argv:
-          - /bin/bash
-          - "-c"
-          - "ls -lah > /dev/stderr"
-        chdir: /root
-      register: result
+       - name: Run a simple command (argv)
+         community.docker.docker_container_exec:
+           container: my_container
+           argv:
+             - /bin/bash
+             - "-c"
+             - "ls -lah > /dev/stderr"
+           chdir: /root
+         register: result
 
-  handlers:
-    - name: Stop and Remove Docker Container
-      block:
+        # - name: Never print this
+        #   ansible.builtin.debug:
+        #     msg: 'I never execute, due to the above task failing, :-('
+
+      rescue: # <--- a rescue
         - name: Check if the task failed
           fail:
             msg: "Task failed, stopping and removing the container"
@@ -38,8 +40,16 @@
           docker_container:
             name: my_container
             state: stopped
+          when: result is failed
+
         - name: Remove Docker Container
           docker_container:
             name: my_container
             state: absent
+          when: result is failed
       ignore_errors: true
+
+      always: # <--- an always
+        - name: Always do this
+          ansible.builtin.debug:
+            msg: "This always executes"
