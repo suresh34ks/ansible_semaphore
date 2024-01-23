@@ -25,6 +25,8 @@
           - "ls -lah > /dev/stderr"
         chdir: /root
       register: result
+      notify:
+        - Stop and Remove Docker Container
 
   handlers:
     - name: Stop and Remove Docker Container
@@ -38,9 +40,10 @@
           docker_container:
             name: my_container
             state: stopped
-
+          when: result is failed
         - name: Remove Docker Container
           docker_container:
             name: my_container
             state: absent
+          when: result is failed
       ignore_errors: true
