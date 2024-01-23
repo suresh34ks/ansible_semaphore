@@ -1,26 +1,15 @@
 ---
 - name: Create Docker Container and Update APT packages
-  hosts: localhost  # Run tasks locally
+  hosts: 172.27.83.5  # Run tasks locally
   gather_facts: false  # Skip gathering facts about the local machine
 
   tasks:
-    - name: Install pip
-      apt:
-        name: python3-pip
-        state: present
-
-    - name: Install pip packages
-      pip:
-        name: "{{ item.name }}"
-        executable: pip3  # Use pip3 for Python 3
-      with_items: 
-        - requests
-        - "python-apt"
     - name: Create Docker Container
       docker_container:
         name: my_container
         image: ubuntu:20.04
         state: started
+        ports: "2222:22"
     - name: Run task inside the Docker Container
       command: "ls"
       delegate_to: my_container
