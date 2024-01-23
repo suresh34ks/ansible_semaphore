@@ -1,0 +1,27 @@
+---
+- name: Create Docker Container and Update APT packages
+  hosts: localhost  # Run tasks locally
+  gather_facts: false  # Skip gathering facts about the local machine
+
+  tasks:
+    - name: Create Docker Container
+      docker_container:
+        name: test_container
+        image: ubuntu
+        state: started
+        ports:
+          - "2222:22"  # Map host port 2222 to container port 22
+      register: container_result
+
+    - name: Wait for Docker Container to be started
+      wait_for:
+        host: "localhost"
+        port: 2222
+        state: started
+      when: container_result.changed
+
+    - name: Update APT package cache on Docker Container
+      become: true
+      hosts: docker_test
+      apt:
+        update_cache: yes
