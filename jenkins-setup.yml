@@ -29,7 +29,8 @@
         argv:
           - apt-get
           - update
-          - "-y &&"
+          - "-y"
+          - "&&"
           - apt-get
           - install
           - openjdk-11-jdk
