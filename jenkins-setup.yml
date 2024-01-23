@@ -9,10 +9,13 @@
         name: python3-pip
         state: present
 
-    - name: Install requests library
+    - name: Install pip packages
       pip:
-        name: requests
-        executable: pip3
+        name: "{{ item.name }}"
+        executable: pip3  # Use pip3 for Python 3
+      with_items: 
+        - requests
+        - "python-apt"
     - name: Create Docker Container
       docker_container:
         name: my_container
