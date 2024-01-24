@@ -1,0 +1,12 @@
+---
+- name: Create Docker Container and Update APT packages
+  hosts: 172.27.83.5
+  gather_facts: false
+  tasks:
+    - name: Restart services
+      community.docker.docker_compose:
+        project_src: jenkins
+        build: false
+        state: started
+      register: output
+
