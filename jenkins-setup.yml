@@ -85,7 +85,7 @@
           - /bin/bash
           - "-c"
           - "systemctl start jenkins"
-      register: result
+     # register: result
     - name: Check Jenkins status
       community.docker.docker_container_exec:
         container: my_container
