@@ -17,7 +17,7 @@
         - docker-compose
     - name: Restart services
       community.docker.docker_compose:
-        project_src: jenkins
+        project_src: /ansible/jenkins
         build: false
         state: present
       register: output
