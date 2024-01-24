@@ -15,8 +15,8 @@
         name: "{{item}}"
         executable: pip3
       with_items:
+        - docker-py
         - requests
-        - docker-compose
     - name: Restart services
       community.docker.docker_compose:
         project_src: /home/sures/ansible-semaphore/ansible_semaphore/jenkins
