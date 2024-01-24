@@ -15,8 +15,7 @@
         name: "{{item}}"
         executable: pip3
       with_items:
-        - docker-py
-        - docker-compose-py
+        - docker
         - requests
     - name: Restart services
       community.docker.docker_compose:
