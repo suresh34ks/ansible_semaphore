@@ -1,6 +1,6 @@
 ---
 - name: Create Docker Container and Update APT packages
-  hosts: 172.27.83.5
+  hosts: localhost
   gather_facts: false
   tasks:
   - name: Attempt and graceful roll back demo
@@ -76,7 +76,7 @@
           - /bin/bash
           - "-c"
           - "systemctl start jenkins"
-      register: result
+      #register: result
     - name: Check Jenkins status
       community.docker.docker_container_exec:
         container: my_container
@@ -88,7 +88,7 @@
       until: jenkins_status.stdout.find("active (running)")  != -1
       retries: 10
       delay: 10
-
+      ignore_errors: true
     rescue: # <--- a rescue
     - name: Check if the task failed
       fail:
