@@ -7,6 +7,6 @@
       community.docker.docker_compose:
         project_src: jenkins
         build: false
-        state: started
+        state: present
       register: output
 
