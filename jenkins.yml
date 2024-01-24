@@ -9,12 +9,12 @@
         state: present
     - name: Install requests library
       pip:
-        name: requests
+        name: {{item}}
         executable: pip3
-    - name: Install requests library
-      pip:
-        name: docker
-        executable: pip3
+      with_items:
+        - docker
+        - requests
+        - docker-compose
     - name: Restart services
       community.docker.docker_compose:
         project_src: jenkins
