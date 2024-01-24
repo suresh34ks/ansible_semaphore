@@ -17,7 +17,7 @@
         - docker-compose
     - name: Restart services
       community.docker.docker_compose:
-        project_src: /ansible/jenkins
+        project_src: /home/sures/ansible-semaphore/ansible_semaphore/jenkins
         build: false
         state: present
       register: output
