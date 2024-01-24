@@ -11,7 +11,7 @@
         name: python3-pip
         state: present
     - name: Install requests library
-      pip:
+      pip3:
         name: "{{item}}"
         executable: pip3
       with_items:
