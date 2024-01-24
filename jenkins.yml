@@ -6,17 +6,12 @@
     - name: Remove
       shell: 
         cmd: pip3 uninstall docker docker-py docker-compose docker-compose-plugin -y
-    - name: Install pip
-      apt:
-        name: python3-pip
-        state: present
-    - name: Install requests library
-      shell:
-        cmd: "pip3 install {{item}}"
-      with_items:
-        - docker
-        - docker-compose
-        - requests
+    - name: Install Docker SDK for Python
+      ansible.builtin.pip:
+        name: 
+          - "docker==6.1.3"
+          - "docker-compose"
+          - requests
     - name: Restart services
       docker_compose:
         project_src: /home/sures/ansible-semaphore/ansible_semaphore/jenkins
