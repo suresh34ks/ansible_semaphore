@@ -5,7 +5,7 @@
   tasks:
     - name: Remove
       shell: 
-        cmd: pip3 uninstall docker docker-py docker-compose -y
+        cmd: pip3 uninstall docker docker-py docker-compose docker-compose-plugin -y
     - name: Install pip
       apt:
         name: python3-pip
@@ -15,7 +15,7 @@
         name: "{{item}}"
         executable: pip3
       with_items:
-        - docker
+        - docker-py
         - requests
     - name: Restart services
       community.docker.docker_compose:
