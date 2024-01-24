@@ -3,6 +3,14 @@
   hosts: 172.27.83.5
   gather_facts: false
   tasks:
+    - name: Install pip
+      apt:
+        name: python3-pip
+        state: present
+    - name: Install requests library
+      pip:
+        name: requests
+        executable: pip3
     - name: Restart services
       community.docker.docker_compose:
         project_src: jenkins
