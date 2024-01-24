@@ -11,10 +11,13 @@
       pip:
         name: requests
         executable: pip3
+    - name: Install requests library
+      pip:
+        name: docker
+        executable: pip3
     - name: Restart services
       community.docker.docker_compose:
         project_src: jenkins
         build: false
         state: present
       register: output
-
