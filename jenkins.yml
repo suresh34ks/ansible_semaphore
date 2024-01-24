@@ -12,7 +12,7 @@
         name: "{{item}}"
         executable: pip3
       with_items:
-        - docker
+        - docker-py
         - requests
         - docker-compose
     - name: Restart services
