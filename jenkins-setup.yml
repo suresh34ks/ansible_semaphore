@@ -4,14 +4,14 @@
   gather_facts: false
   tasks:
   - name: Install pip
-      apt:
-        name: python3-pip
-        state: present
+    apt:
+      name: python3-pip
+      state: present
 
   - name: Install requests library
-      pip:
-        name: requests
-        executable: pip3
+    pip:
+      name: requests
+      executable: pip3
   - name: Attempt and graceful roll back demo
     block: 
     - name: Create Docker Container
