@@ -37,7 +37,7 @@
           - /bin/bash
           - "-c"
           - "apt-get install  openjdk-11-jdk  wget  apt-transport-https  ca-certificates  gnupg2  software-properties-common  -y"
-      # register: result
+      register: result
     - name: Add Jenkins repository key
       community.docker.docker_container_exec:
         container: my_container
@@ -45,6 +45,7 @@
           - /bin/bash
           - "-c"
           - wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+      register: result
     - name: Add Jenkins repository
       community.docker.docker_container_exec:
         container: my_container
@@ -52,40 +53,37 @@
           - /bin/bash
           - "-c"
           - sh -c 'echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]  https://pkg.jenkins.io/debian-stable binary/ |  tee /etc/apt/sources.list.d/jenkins.list > /dev/null'
+      register: result
     - name: Update package lists
       community.docker.docker_container_exec:
         container: my_container
         argv:
           - apt-get
           - update
+      register: result
     - name: Install Jenkins
       community.docker.docker_container_exec:
         container: my_container
         argv:
           - /bin/bash
           - "-c"
-          - apt-get
-          - install
-          - jenkins
-          - y
+          - " apt-get install jenkins -y"
+      register: result
     - name: Start Jenkins service
       community.docker.docker_container_exec:
         container: my_container
         argv:
           - /bin/bash
           - "-c"
-          - systemctl
-          - start
-          - jenkins
+          - "systemctl start jenkins"
+      register: result
     - name: Check Jenkins status
       community.docker.docker_container_exec:
         container: my_container
         argv:
           - /bin/bash
           - "-c"
-          - systemctl
-          - status
-          - jenkins
+          - "systemctl status jenkins"
       register: jenkins_status
       until: jenkins_status.stdout.find("active (running)")  != -1
       retries: 10
