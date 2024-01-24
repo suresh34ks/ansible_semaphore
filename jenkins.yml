@@ -22,4 +22,6 @@
         project_src: /home/sures/ansible-semaphore/ansible_semaphore/jenkins
         build: false
         state: present
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
       register: output
