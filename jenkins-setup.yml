@@ -82,7 +82,7 @@
       community.docker.docker_container_exec:
         container: my_container
         argv:
-          - /bin/bash
+          - /bin/sh
           - "-c"
           - "systemctl start jenkins"
      # register: result
@@ -90,7 +90,7 @@
       community.docker.docker_container_exec:
         container: my_container
         argv:
-          - /bin/bash
+          - /bin/sh
           - "-c"
           - "systemctl status jenkins"
       register: jenkins_status
