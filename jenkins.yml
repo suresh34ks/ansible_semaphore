@@ -3,6 +3,8 @@
   hosts: 172.27.83.5
   gather_facts: false
   tasks:
+    - name: Remove
+      cmd: pip3 uninstall docker docker-py docker-compose -y
     - name: Install pip
       apt:
         name: python3-pip
